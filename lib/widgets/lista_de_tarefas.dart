@@ -20,16 +20,17 @@ class ListaDeTarefas extends StatelessWidget {
       child: Slidable(
         endActionPane: ActionPane(
           extentRatio: 0.5,
-          motion: const ScrollMotion(),
+          motion: const DrawerMotion(),
           children: [
             SlidableAction(
-              // An action can be bigger than the others.
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-              icon: Icons.delete,
-              label: 'Deletar',
-              onPressed: onDelete(lista),
-            ),
+                // An action can be bigger than the others.
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                icon: Icons.delete,
+                label: 'Deletar',
+                onPressed: (Function) {
+                  onDelete(lista);
+                }),
           ],
         ),
         child: Container(

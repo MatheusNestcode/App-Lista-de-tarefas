@@ -16,6 +16,8 @@ class _ToDoListPageState extends State<ToDoListPage> {
 
 //lista de strings
   List<Lista> tarefas = [];
+  Lista? deletarTarefa;
+  int? deletarTarefaPos;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Adicione uma tarefa',
-                          hintText: 'Ex. Extudar flutter',
+                          hintText: 'Ex. Estudar flutter',
                         ),
                       ),
                     ),
@@ -95,7 +97,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
                     ),
                     const SizedBox(width: 8),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: mostrarCaixaDeDialogoParaExcluir,
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5)),
@@ -115,8 +117,59 @@ class _ToDoListPageState extends State<ToDoListPage> {
   }
 
   void onDelete(Lista tarefa) {
-    setState() {
+    deletarTarefa = tarefa;
+    deletarTarefaPos = tarefas.indexOf(tarefa);
+
+    setState(() {
       tarefas.remove(tarefa);
-    }
+    });
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Tarefa ${tarefa.title} foi deletada com sucesso'),
+        action: SnackBarAction(
+          label: 'Desfazer',
+          onPressed: () {
+            setState(() {
+              tarefas.insert(deletarTarefaPos!, deletarTarefa!);
+            });
+          },
+        ),
+        duration: const Duration(seconds: 5),
+      ),
+    );
+  }
+
+  void mostrarCaixaDeDialogoParaExcluir() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Limpar tudo?'),
+        content: const Text(
+            'Voce tem certeza que deseja apagar todos as tarefas da sua lista ?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              deletarTodasAsTarefas();
+            },
+            child: const Text('Deletar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void deletarTodasAsTarefas() {
+    setState(() {
+      tarefas.clear();
+    });
   }
 }
