@@ -28,7 +28,7 @@ class ListaDeTarefas extends StatelessWidget {
                 foregroundColor: Colors.white,
                 icon: Icons.delete,
                 label: 'Deletar',
-                onPressed: (Function) {
+                onPressed: (_) {
                   onDelete(lista);
                 }),
           ],

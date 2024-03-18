@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:listadetarefas/models/lista.dart';
+import 'package:listadetarefas/repositories/lista_repositorio.dart';
 
 import '../widgets/lista_de_tarefas.dart';
 
@@ -14,10 +15,23 @@ class _ToDoListPageState extends State<ToDoListPage> {
   //controlador para pegar as informaçoes do campo texto
   final TextEditingController tarefasControle = TextEditingController();
 
+  final ListaRepository listaRepository = ListaRepository();
+
 //lista de strings
   List<Lista> tarefas = [];
   Lista? deletarTarefa;
   int? deletarTarefaPos;
+
+  @override
+  void initState() {
+    super.initState();
+
+    listaRepository.getListadeTarefas().then((value) {
+      setState(() {
+        tarefas = value;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +167,10 @@ class _ToDoListPageState extends State<ToDoListPage> {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: const Text('Cancelar'),
+            child: const Text(
+              'Cancelar ',
+              style: TextStyle(color: Color(0xff00d7f3)),
+            ),
           ),
           TextButton(
             onPressed: () {
