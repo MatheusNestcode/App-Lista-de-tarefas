@@ -5,7 +5,7 @@ import 'package:listadetarefas/repositories/lista_repositorio.dart';
 import '../widgets/lista_de_tarefas.dart';
 
 class ToDoListPage extends StatefulWidget {
-  const ToDoListPage({super.key});
+  const ToDoListPage({Key? key}) : super(key: key);
 
   @override
   State<ToDoListPage> createState() => _ToDoListPageState();
@@ -21,6 +21,8 @@ class _ToDoListPageState extends State<ToDoListPage> {
   List<Lista> tarefas = [];
   Lista? deletarTarefa;
   int? deletarTarefaPos;
+
+  String? mensagemDeErro;
 
   @override
   void initState() {
@@ -49,10 +51,11 @@ class _ToDoListPageState extends State<ToDoListPage> {
                       child: TextField(
                         //paramentro para pegar o texto
                         controller: tarefasControle,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
                           labelText: 'Adicione uma tarefa',
                           hintText: 'Ex. Estudar flutter',
+                          errorText: mensagemDeErro,
                         ),
                       ),
                     ),
@@ -63,13 +66,21 @@ class _ToDoListPageState extends State<ToDoListPage> {
                       onPressed: () {
                         //usar o texto capturado com ação do botão
                         String text = tarefasControle.text;
+                        if (text.isEmpty) {
+                          setState(() {
+                            mensagemDeErro = 'Favor digitar uma tarefa!';
+                          });
+                          return;
+                        }
                         //comando para atualizar o estado da lista
                         setState(() {
                           Lista newLista =
                               Lista(title: text, dateTime: DateTime.now());
                           tarefas.add(newLista);
+                          mensagemDeErro = null;
                         });
                         tarefasControle.clear();
+                        listaRepository.saveLista(tarefas);
                       },
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
@@ -137,6 +148,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
     setState(() {
       tarefas.remove(tarefa);
     });
+    listaRepository.saveLista(tarefas);
 
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -148,6 +160,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
             setState(() {
               tarefas.insert(deletarTarefaPos!, deletarTarefa!);
             });
+            listaRepository.saveLista(tarefas);
           },
         ),
         duration: const Duration(seconds: 5),
@@ -188,5 +201,6 @@ class _ToDoListPageState extends State<ToDoListPage> {
     setState(() {
       tarefas.clear();
     });
+    listaRepository.saveLista(tarefas);
   }
 }
